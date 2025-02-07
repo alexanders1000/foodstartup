@@ -14,7 +14,34 @@ let ingredients = [];
 let currentRecipes = [];
 let currentRecipeIndex = 0;
 
-// Sample recipes (replace this with Claude API call in production)
+// Updated function to get recipe suggestions using API
+async function getRecipeSuggestions() {
+    try {
+        const response = await fetch('/.netlify/functions/getRecipes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ingredients: ingredients,
+                canShop: canShopCheckbox.checked
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`API call failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.recipes;
+
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+        return sampleRecipes; // Fallback to sample recipes if API fails
+    }
+}
+
+// Sample recipes (replace this with API call in production)
 const sampleRecipes = [
     {
         name: "Pasta Carbonara",

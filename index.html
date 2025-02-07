@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Swiper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Your Ingredients</h2>
+            <div class="ingredient-input">
+                <input type="text" id="ingredientInput" placeholder="Add ingredient...">
+                <button id="addIngredient">Add</button>
+            </div>
+            <ul id="ingredientList"></ul>
+            <div class="shopping-option">
+                <input type="checkbox" id="canShop">
+                <label for="canShop">I can buy more ingredients</label>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div id="recipeCards" class="recipe-cards">
+                <!-- Recipe cards will be inserted here -->
+            </div>
+            <div class="swipe-buttons">
+                <button id="rejectBtn" class="swipe-btn reject">✕</button>
+                <button id="acceptBtn" class="swipe-btn accept">♥</button>
+            </div>
+            <div id="noMoreRecipes" class="hidden">
+                <h2>No more recipes!</h2>
+                <button id="resetBtn">Start Over</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

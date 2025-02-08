@@ -1,7 +1,5 @@
 // netlify/functions/getRecipes.js
 
-const { Configuration, OpenAIApi } = require('openai');
-
 exports.handler = async function(event, context) {
     // Enable CORS
     const headers = {
@@ -35,8 +33,8 @@ exports.handler = async function(event, context) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.CLAUDE_API_KEY,
-                'anthropic-version': '2023-06-01'
+                'Authorization': `Bearer ${process.env.CLAUDE_API_KEY}`,
+                'anthropic-version': '2024-01-01'
             },
             body: JSON.stringify({
                 model: "claude-3-sonnet-20240229",
@@ -63,6 +61,10 @@ exports.handler = async function(event, context) {
             })
         });
 
+        if (!response.ok) {
+            throw new Error(`API call failed: ${response.status}`);
+        }
+
         const data = await response.json();
         const recipes = JSON.parse(data.content[0].text).recipes;
 
@@ -76,7 +78,7 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Failed to generate recipes' })
+            body: JSON.stringify({ error: 'Failed to generate recipes', details: error.message })
         };
     }
 };

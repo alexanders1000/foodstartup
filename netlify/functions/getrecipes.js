@@ -1,23 +1,16 @@
 // netlify/functions/getRecipes.js
 
 exports.handler = async function(event, context) {
-    // Enable CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
     };
 
-    // Handle preflight requests
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
+        return { statusCode: 200, headers, body: '' };
     }
 
-    // Only allow POST requests
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -38,12 +31,13 @@ exports.handler = async function(event, context) {
             },
             body: JSON.stringify({
                 model: "claude-3-sonnet-20240229",
-                max_tokens: 1000,
+                max_tokens: 1500,
                 messages: [
                     {
                         role: "user",
                         content: `Generate 5 diverse recipe suggestions based on these ingredients: ${ingredients.join(', ')}. 
                         ${canShop ? "The user can buy additional ingredients if needed." : "Only use the listed ingredients."}
+                        For each recipe, include a detailed image prompt that will create a beautiful, appetizing photo of the dish.
                         Return the response in this exact JSON format:
                         {
                             "recipes": [
@@ -52,7 +46,8 @@ exports.handler = async function(event, context) {
                                     "cuisine": "Cuisine Type",
                                     "ingredients": ["ingredient1", "ingredient2"],
                                     "description": "Brief description",
-                                    "instructions": "Cooking instructions"
+                                    "instructions": "Cooking instructions",
+                                    "imagePrompt": "Detailed prompt for generating a photo of this dish"
                                 }
                             ]
                         }`
@@ -62,16 +57,23 @@ exports.handler = async function(event, context) {
         });
 
         if (!response.ok) {
-            throw new Error(`API call failed: ${response.status}`);
+            throw new Error(`Claude API call failed: ${response.status}`);
         }
 
-        const data = await response.json();
-        const recipes = JSON.parse(data.content[0].text).recipes;
+        const claudeData = await response.json();
+        const recipes = JSON.parse(claudeData.content[0].text).recipes;
+
+        // Now generate images using your preferred image generation API
+        // For this example, we'll use a placeholder image service
+        const recipesWithImages = recipes.map(recipe => ({
+            ...recipe,
+            imageUrl: `/api/placeholder/800/600` // Replace this with actual image generation
+        }));
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify({ recipes })
+            body: JSON.stringify({ recipes: recipesWithImages })
         };
     } catch (error) {
         console.error('Error:', error);

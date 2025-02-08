@@ -14,6 +14,41 @@ let ingredients = [];
 let currentRecipes = [];
 let currentRecipeIndex = 0;
 
+// Show current recipe with image
+function showCurrentRecipe() {
+    recipeCards.innerHTML = '';
+    
+    if (currentRecipeIndex >= currentRecipes.length) {
+        noMoreRecipes.classList.remove('hidden');
+        return;
+    }
+    
+    noMoreRecipes.classList.add('hidden');
+    const recipe = currentRecipes[currentRecipeIndex];
+    
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.innerHTML = `
+        <div class="recipe-image-container">
+            <img src="${recipe.imageUrl}" alt="${recipe.name}" class="recipe-image">
+            <div class="recipe-title-overlay">
+                <h2>${recipe.name}</h2>
+            </div>
+        </div>
+        <div class="recipe-content">
+            <p><strong>Cuisine:</strong> ${recipe.cuisine}</p>
+            <p>${recipe.description}</p>
+            <p><strong>Required Ingredients:</strong></p>
+            <p>${recipe.ingredients.join(', ')}</p>
+            <p><strong>Instructions:</strong></p>
+            <p>${recipe.instructions}</p>
+        </div>
+    `;
+    
+    recipeCards.appendChild(card);
+    initializeSwipe(card);
+}
+
 // Updated function to get recipe suggestions using API
 async function getRecipeSuggestions() {
     try {

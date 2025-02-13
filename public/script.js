@@ -146,7 +146,7 @@ async function getRecipeSuggestions() {
         return sampleRecipes; // Fallback to sample recipes if API fails
     }
 }
-/*
+
 // Sample recipes (replace this with API call in production)
 const sampleRecipes = [
     {
@@ -163,7 +163,7 @@ const sampleRecipes = [
     }
     // Add more sample recipes here
 ];
-*/
+
 
 // Add ingredient
 function addIngredient() {

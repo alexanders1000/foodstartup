@@ -25,6 +25,77 @@ function showCurrentRecipe() {
     
     noMoreRecipes.classList.add('hidden');
     const recipe = currentRecipes[currentRecipeIndex];
+
+    //debugging
+    // Add these debug logs to your frontend script.js
+
+async function getRecipeSuggestions() {
+    try {
+        console.log('Sending ingredients to API:', ingredients);
+        const response = await fetch('/.netlify/functions/getRecipes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ingredients: ingredients,
+                canShop: canShopCheckbox.checked
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`API call failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Received recipes from API:', data);
+        return data.recipes;
+
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+        return sampleRecipes; // Fallback to sample recipes if API fails
+    }
+}
+
+// Update showCurrentRecipe with debug logs
+function showCurrentRecipe() {
+    console.log('Showing recipe index:', currentRecipeIndex);
+    console.log('Current recipes:', currentRecipes);
+    
+    recipeCards.innerHTML = '';
+    
+    if (currentRecipeIndex >= currentRecipes.length) {
+        console.log('No more recipes to show');
+        noMoreRecipes.classList.remove('hidden');
+        return;
+    }
+    
+    noMoreRecipes.classList.add('hidden');
+    const recipe = currentRecipes[currentRecipeIndex];
+    console.log('Displaying recipe:', recipe);
+    
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.innerHTML = `
+        <div class="recipe-image-container">
+            <img src="${recipe.imageUrl || '/api/placeholder/800/600'}" alt="${recipe.name}" class="recipe-image">
+            <div class="recipe-title-overlay">
+                <h2>${recipe.name}</h2>
+            </div>
+        </div>
+        <div class="recipe-content">
+            <p><strong>Cuisine:</strong> ${recipe.cuisine}</p>
+            <p>${recipe.description}</p>
+            <p><strong>Required Ingredients:</strong></p>
+            <p>${recipe.ingredients.join(', ')}</p>
+            <p><strong>Instructions:</strong></p>
+            <p>${recipe.instructions}</p>
+        </div>
+    `;
+    
+    recipeCards.appendChild(card);
+    initializeSwipe(card);
+}
     
     const card = document.createElement('div');
     card.className = 'recipe-card';

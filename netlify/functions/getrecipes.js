@@ -35,9 +35,8 @@ exports.handler = async function(event, context) {
                 messages: [
                     {
                         role: "user",
-                        content: `Generate 5 diverse recipe suggestions based on these ingredients: ${ingredients.join(', ')}. 
+                        content: `Generate 5 diverse recipe suggestions which will be simple to make and tasty based on these ingredients: ${ingredients.join(', ')}. 
                         ${canShop ? "The user can buy additional ingredients if needed." : "Only use the listed ingredients."}
-                        For each recipe, include a detailed image prompt that will create a beautiful, appetizing photo of the dish.
                         Return the response in this exact JSON format:
                         {
                             "recipes": [
